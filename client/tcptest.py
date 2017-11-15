@@ -1,35 +1,22 @@
 import socket
+soc = socket.socket(socket.AF_INET, socket.SOCK_STREAM)  
+soc.connect(("192.168.43.40", 2303))
 
-class SocketHandler:
+import random  
+data = zip([random.randint(1,1000) for i in range(1000)],  
+ [random.randint(1,1000) for i in range(1000)])
 
-  def __init__(self, sock=None):
-    if sock is None:
-      self.sock = socket.socket(
-      socket.AF_INET, socket.SOCK_STREAM)
-    else:
-      self.sock = sock
+for x, y in data:  
+    # send x and y separated by tab 
+    data = "{}\t{}".format(x,y)
+    soc.sendall(data.encode("utf8"))
 
-  def connect(self, host, port):
-    self.sock.connect((host, port))
+    # wait for response from server, so we know
+    # that server has enough time to process the
+    # data. Without this it can make problems
 
-  def send(self, msg):
-    totalsent = 0
-    MSGLEN = len(msg)
-    while totalsent < MSGLEN:
-      sent = self.sock.send(msg[totalsent:])
-      if sent == 0:
-        raise RuntimeError("socket connection broken")
+    if soc.recv(4096).decode("utf8") == "-":
+        pass
 
-      totalsent = totalsent + sent
-
-  def receive(self, EOFChar='\036'):
-    msg = ''
-    MSGLEN = 100
-    while len(msg) < MSGLEN:
-      chunk = self.sock.recv(MSGLEN-len(msg))
-      if chunk.find(EOFChar) != -1:
-        msg = msg + chunk
-        return msg
-
-      msg = msg + chunk
-      return msg
+# end connection by sending this string
+soc.send(b'--ENDOFDATA--')  

@@ -1,3 +1,17 @@
+def rec_data(conn, MAX_BUFFER_SIZE):  
+    input_from_client_bytes = conn.recv(MAX_BUFFER_SIZE)
+
+    import sys
+    siz = sys.getsizeof(input_from_client_bytes)
+    if  siz >= MAX_BUFFER_SIZE:
+        print("The length of input is probably too long: {}".format(siz))
+
+    input_from_client = input_from_client_bytes.decode("utf8").rstrip()
+
+    return input_from_client
+
+
+
 def do_some_stuffs_with_input(input_string):  
     """
     This is where all the processing happens.
@@ -8,28 +22,26 @@ def do_some_stuffs_with_input(input_string):
     print("Processing that nasty input!")
     return input_string[::-1]
 
-def client_thread(conn, ip, port, MAX_BUFFER_SIZE = 4096):
+def client_thread(conn, ip, port, MAX_BUFFER_SIZE = 88888):
 
-    # the input is in bytes, so decode it
-    input_from_client_bytes = conn.recv(MAX_BUFFER_SIZE)
+    # read lines periodically without ending connection
+    still_listen = True
+    while still_listen:
+        input_from_client = rec_data(conn, MAX_BUFFER_SIZE)
 
-    # MAX_BUFFER_SIZE is how big the message can be
-    # this is test if it's sufficiently big
-    import sys
-    siz = sys.getsizeof(input_from_client_bytes)
-    if  siz >= MAX_BUFFER_SIZE:
-        print("The length of input is probably too long: {}".format(siz))
+        # if you receive this, end the connection
+        if "--ENDOFDATA--" in input_from_client:
+            print('--ENDOFDATA--')
+            conn.close()
+            print('Connection ' + ip + ':' + port + " ended")
+            still_listen = False
+        else:            
+            splin = input_from_client.split('\t')
 
-    # decode input and strip the end of line
-    input_from_client = input_from_client_bytes.decode("utf8").rstrip()
+            print("{}, {}".format(splin[0], splin[1]))
 
-    res = do_some_stuffs_with_input(input_from_client)
-    print("Result of processing {} is: {}".format(input_from_client, res))
-
-    vysl = res.encode("utf8")  # encode the result string
-    conn.sendall(vysl)  # send it to client
-    conn.close()  # close connection
-    print('Connection ' + ip + ':' + port + " ended")
+            # tell client that we can accept another data processing
+            conn.sendall("-".encode("utf8"))
 
 def start_server():
 
