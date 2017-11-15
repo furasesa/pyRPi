@@ -3,7 +3,6 @@ import lib.hwid as hwid
 import RPi.GPIO as GPIO
 from lib.dict import Dictionary
 
-
 try:
     with open('config.json', 'r') as f:
         data = json.load(f)
@@ -22,7 +21,6 @@ try:
         GPIO.getmode()
         GPIO.setup(ch_in,GPIO.IN)
         GPIO.setup(ch_out,GPIO.OUT)
-
        
 except Exception as ex:
     print(ex)
