@@ -1,6 +1,8 @@
-from tcptest import SocketHandler
+import socket
+sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)  
+sock.connect(("localhost", 2303))
 
-s = SocketHandler()
-s.connect('192.168.43.40',2303)
+data = sock.recv(256)
+msg = data.decode("utf8").rstrip()
 
-s.send('test python socket tcp port 2303')
+print(msg)
