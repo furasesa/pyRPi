@@ -166,10 +166,16 @@ class Config:
         if type(channel) is str:
             print('channel type is int')
             if value == GPIO.IN:
-                self.ch_out.remove(channel)
+                try:
+                    self.ch_out.remove(channel)
+                except Exception:
+                    pass
                 self.ch_in.append(channel)
             elif value == GPIO.OUT:
-                self.ch_in.remove(channel)
+                try:
+                    self.ch_in.remove(channel)
+                except Exception:
+                    pass
                 self.ch_out.append(channel)
             else:
                 print("setup => I Dont know")
@@ -229,34 +235,39 @@ class Config:
 
     def save (self):
         # generating current setup
+
+        # for cur_ch in self.ch_in:
+            # print ('cuurent channel :',selcur_ch)
         for cur_ch_in in self.ch_in:
             if cur_ch_in == '17':
                 ch17_setup = GPIO.IN
-            else:
-                ch17_setup = GPIO.OUT
-            if cur_ch_in == '18':
+            elif cur_ch_in == '18':
                 ch18_setup = GPIO.IN
-            else:
-                ch18_setup = GPIO.OUT
-            if cur_ch_in == '27':
+            elif cur_ch_in == '27':
                 ch27_setup = GPIO.IN
-            else:
-                ch27_setup = GPIO.OUT
-            if cur_ch_in == '22':
+            elif cur_ch_in == '22':
                 ch22_setup = GPIO.IN
-            else:
-                ch22_setup = GPIO.OUT
-            if cur_ch_in == '23':
+            elif cur_ch_in == '23':
                 ch23_setup = GPIO.IN
-            else:
-                ch23_setup = GPIO.OUT
-            if cur_ch_in == '24':
+            elif cur_ch_in == '24':
                 ch24_setup = GPIO.IN
-            else:
-                ch24_setup = GPIO.OUT
-            if cur_ch_in == '25':
+            elif cur_ch_in == '25':
                 ch25_setup = GPIO.IN
-            else:
+        
+        for cur_ch_out in self.ch_out:
+            if cur_ch_out == '17':
+                ch17_setup = GPIO.OUT
+            elif cur_ch_out == '18':
+                ch18_setup = GPIO.OUT
+            elif cur_ch_out == '27':
+                ch27_setup = GPIO.OUT
+            elif cur_ch_out == '22':
+                ch22_setup = GPIO.OUT
+            elif cur_ch_out == '23':
+                ch23_setup = GPIO.OUT
+            elif cur_ch_out == '24':
+                ch24_setup = GPIO.OUT
+            elif cur_ch_out == '25':
                 ch25_setup = GPIO.OUT
         
         cur_config = {
@@ -331,8 +342,6 @@ class Config:
         with open('gpio_conf.json', 'w') as f:
             json.dump(cur_config, f)
 
-    
-
 if __name__ == '__main__':
     '''
     call Class Config
@@ -352,10 +361,12 @@ if __name__ == '__main__':
 
     '''
     c = Config()
-    # ch_in = ['18','27','22','23','24','25']
-
-    # c.setup('18',GPIO.IN)
-    # c.save
+    
+    # ch_in = ['17','18','27','22','23','24']
+    # c.setup(ch_in,GPIO.IN)
+    # c.setup('17',GPIO.OUT)
+    # c.setup('25', GPIO.IN)
+    # c.save()
 
     # c.output('18',1)
     # c.save()
