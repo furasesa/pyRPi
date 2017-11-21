@@ -17,6 +17,10 @@ channel = []
 def setmode(MODE):
     global selectedmode
     selectedmode = MODE
+    if MODE == 11:
+        print ("selected MODE : GPIO.BCM")
+    elif MODE == 10:
+        print ("selected MODE : GPIO.BOARD")
 
 def getmode():
     if selectedmode == BCM:
@@ -33,20 +37,18 @@ def setup(channel, MODE):
     global co
     
     if MODE == IN:
-        if type(channel) is int:
+        if type(channel) is str:
             ci = channel_in.append(channel)
         elif type(channel) is list:
             ci = channel
-        # print ('channel INPUT mode',channel_in)
     elif MODE == OUT:
-        if type(channel) is int:
+        if type(channel) is str:
             co = channel_out.append(channel)
         elif type(channel) is list:
             co = channel
-        # print ('channel OUTPUT mode',channel_out)
     else :
         print('fuck?')
-
+    
 def list_ci():
     print ('GPIO.IN :',ci)
 def list_co():

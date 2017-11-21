@@ -342,6 +342,16 @@ class Config:
         with open('gpio_conf.json', 'w') as f:
             json.dump(cur_config, f)
 
+
+        # getter
+    
+    def get_ch_in (self):
+        return self.ch_in
+    def get_ch_out (self):
+        return self.ch_out
+    def get_mode(self):
+        return self.mode    
+
 if __name__ == '__main__':
     '''
     call Class Config
