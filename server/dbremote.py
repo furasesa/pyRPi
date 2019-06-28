@@ -1,11 +1,5 @@
 import os
-
-devicename = 'silver'
-
 from cryptography.fernet import Fernet
-key = Fernet.generate_key()
-print(key)
-
 try:
     import pymysql
 except ImportError:
@@ -16,6 +10,12 @@ try:
 except ImportError:
     GPIO = None
     os.system("sudo apt install python-rpi.gpio python3-rpi.gpio")
+
+
+key = Fernet.generate_key()
+print(key)
+
+devicename = 'silver'
 
 
 class GPIORemote:
