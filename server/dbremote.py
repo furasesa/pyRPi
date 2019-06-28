@@ -2,38 +2,32 @@ import os
 
 devicename = 'silver'
 
-
-def getserial():
-    # Extract serial from cpuinfo file
-    cpuserial = "0000000000000000"
-    try:
-        f = open('/proc/cpuinfo', 'r')
-        for line in f:
-            if line[0:6] == 'Serial':
-                cpuserial = line[10:26]
-        f.close()
-    except:
-        cpuserial = "ERROR000000000"
-
-    return cpuserial
-
+from cryptography.fernet import Fernet
+key = Fernet.generate_key()
+print(key)
 
 try:
     import pymysql
-except:
+except ImportError:
+    pymysql = None
     os.system("pip3 install pymysql")
 try:
-    import RPi.GPIO as gpio
-except:
+    import RPi.GPIO as GPIO
+except ImportError:
+    GPIO = None
     os.system("sudo apt install python-rpi.gpio python3-rpi.gpio")
 
 
 class GPIORemote:
     def __init__(self):
-        self.serial = getserial()
-        self.gpio = gpio
-        self.gpio.setmode(gpio.BCM)
-        self.gpio.setwarnings(False)
+        # f = open('/proc/cpuinfo', 'r')
+        for line in open('/proc/cpuinfo', 'r'):
+            if line[0:6] == 'Serial':
+                self.serial = line[10:26]
+            break
+        self.GPIO = GPIO
+        self.GPIO.setmode(GPIO.BCM)
+        self.GPIO.setwarnings(False)
         # database setup
         self.connection = pymysql.connect(
             host='localhost',
@@ -89,15 +83,15 @@ class GPIORemote:
                     self.cursor.execute(self.sql, self.serial)
                     res = self.cursor.fetchall()
 
-                    for rpisetting in res :
+                    for rpisetting in res:
                         ch = rpisetting['channel']
                         setup = rpisetting['setup']
                         val = rpisetting['val']
                         print("channel :", ch, "setup :", setup, "ch value :", val)
-                        self.gpio.setup(int(ch), int(setup))
+                        self.GPIO.setup(int(ch), int(setup))
 
                         if setup == 0:
-                            self.gpio.output(ch, val)
+                            self.GPIO.output(ch, val)
                         self.connection.commit()
 
         finally:
@@ -119,8 +113,8 @@ if __name__ == '__main__':
 #             ch = mych["ch"]
 #             chval = mych['val']
 #             print("channel :", ch, "with values :", chval)
-#             gpio.setup(ch, gpio.OUT)
-#             gpio.output(ch, chval)
+#             GPIO.setup(ch, GPIO.OUT)
+#             GPIO.output(ch, chval)
 #
 # finally:
 #     connection.close()

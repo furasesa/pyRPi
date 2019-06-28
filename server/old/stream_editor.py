@@ -1,5 +1,5 @@
 import RPi.GPIO as GPIO
-from controller import Config
+from .controller import Config
 
 # import logging
 
