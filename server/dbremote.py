@@ -24,7 +24,7 @@ class GPIORemote:
         for line in open('/proc/cpuinfo', 'r'):
             if line[0:6] == 'Serial':
                 self.serial = line[10:26]
-            break
+        print(self.serial)
         self.GPIO = GPIO
         self.GPIO.setmode(GPIO.BCM)
         self.GPIO.setwarnings(False)
