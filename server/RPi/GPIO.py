@@ -1,6 +1,6 @@
-'''
+"""
 RPi.GPIO testing
-'''
+"""
 
 BCM = 11
 BOARD = 10

@@ -1,12 +1,13 @@
 import os
 from cryptography.fernet import Fernet
+
 try:
     import pymysql
 except ImportError:
     pymysql = None
     os.system("pip3 install pymysql")
 try:
-    import RPi.GPIO as GPIO
+    import gpioController as GPIO
 except ImportError:
     GPIO = None
     os.system("sudo apt install python-rpi.gpio python3-rpi.gpio")
